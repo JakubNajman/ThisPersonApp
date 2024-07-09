@@ -5,19 +5,10 @@ services:
     ports:
       - "8000:8000"
     command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      CONN_STR: mongodb://user:pass@mongodb
     # networks:
     #   - node-network
-  mongodb:
-    image: mongo:6-jammy
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongodata:/data/db
-    # networks:
-    #   - node-network
-
-volumes:
-  mongodata:
 
 networks:
   node-network:
