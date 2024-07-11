@@ -16,14 +16,15 @@ def fetch_and_save_image(image_id: int):
     if response.status_code == 200:
         image = Image.open(BytesIO(response.content))
         gallery[image_id] = image
+
         return image
     return None
 
 def get_buffered_image(image):
     buffer = BytesIO()
-    image = image
     image.save(buffer, format="JPEG")
     buffer.seek(0)
+
     return buffer
 
 class Human(View):
@@ -38,10 +39,13 @@ class Human(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class Gallery(View):
     def get(self, request, id):
+        if not id in gallery.keys():
+            image = fetch_and_save_image(id)
+            if not image:
+                return HttpResponse(status=404)
         image = gallery[id]
-        if not image:
-            return HttpResponse(status=404)
         image = image.resize((200,200))
+
         return HttpResponse(get_buffered_image(image), content_type="image/jpeg")
     
     def put(self, request, id):
