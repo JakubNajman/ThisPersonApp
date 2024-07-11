@@ -7,12 +7,12 @@ from io import BytesIO
 import json
 from django.conf import settings
 from django.views import View
+from .utils import constants
 
 gallery = {}
 
 def fetch_and_save_image(image_id: int):
-    url = "https://thispersondoesnotexist.com"
-    response = requests.get(url)
+    response = requests.get(constants.API_URL)
     if response.status_code == 200:
         image = Image.open(BytesIO(response.content))
         gallery[image_id] = image
@@ -61,8 +61,9 @@ class Gallery(View):
                 if id not in gallery.keys():
                     return JsonResponse({"error": "Wrong ID of image"}, status=404)
                 
-                gallery[new_id] = gallery.pop(id)
-                return JsonResponse({"error": "ID "+str(id) +" changed to "+str(new_id)}, status=200)
+                gallery[int(new_id)] = None
+                gallery[int(new_id)] = gallery.pop(id)
+                return JsonResponse({"info": "ID "+str(id) +" changed to "+str(new_id)}, status=200)
 
             except (KeyError, json.JSONDecodeError):
                 return JsonResponse({"error": "Invalid request format"}, status=400)

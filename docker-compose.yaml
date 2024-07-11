@@ -8,7 +8,7 @@ services:
   react:
     build:
       context: front
+    depends_on:
+      - django
     ports:
       - "3000:3000"
-    environment:
-      CONN_STR: mongodb://user:pass@mongodb
