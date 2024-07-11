@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Navbar, Container, Row, Col, Image } from 'react-bootstrap';
+import { Navbar, Container} from 'react-bootstrap';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { NUMBER_OF_IMAGES } from './constants';
+import Gallery from './Gallery';
 
 const App = () => {
   const [images, setImages] = useState([]);
@@ -9,11 +11,12 @@ const App = () => {
   useEffect(() => {
     const fetchImages = async () => {
       const promises = [];
-      for (let i = 1; i <= 20; i++) {
+      for (let i = 0; i <= NUMBER_OF_IMAGES; i++) {
         promises.push(
           axios.get(`/gallery/preview/${i}`, { responseType: 'arraybuffer' })
             .then(response => {
               const imageUrl = URL.createObjectURL(new Blob([response.data], { type: 'image/jpeg' }));
+              console.log(imageUrl);
               return imageUrl;
             })
             .catch(() => null)
@@ -33,15 +36,7 @@ const App = () => {
           <Navbar.Brand href="#home">ThisPersonApp</Navbar.Brand>
         </Container>
       </Navbar>
-      <Container className="mt-4">
-        <Row>
-          {images.map((image, index) => (
-            <Col key={index} xs={6} md={4} lg={3} className="mb-4">
-              <Image src={image} rounded width="200" height="200" />
-            </Col>
-          ))}
-        </Row>
-      </Container>
+      <Gallery images={images} />
     </div>
   );
 };
